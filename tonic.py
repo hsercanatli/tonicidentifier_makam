@@ -168,10 +168,6 @@ class Histogram(object):
 
 
 class TonicLastNote(Histogram, Data):
-    """
-    more details
-    """
-
     def __init__(self, data):
         self.data = data
 
@@ -202,7 +198,7 @@ class TonicLastNote(Histogram, Data):
         i = 0
         while self.tonic is 0:
             i += 1
-            print i
+            # print i
 
             last_chunk = [element[1] for element in self.pitch_chunks["chunks"][-i]]
 
@@ -215,7 +211,7 @@ class TonicLastNote(Histogram, Data):
                 tonic_cand = float(self.peaks_list[j])
 
                 if (tonic_cand / (2 ** (2. / 53))) <= last_note <= (tonic_cand * (2 ** (2. / 53))):
-                    print "same octave"
+                    # print "same octave"
                     self.tonic = {"estimated_tonic": tonic_cand,
                                   "time_interval": [self.pitch_chunks["chunks"][-i][0][0],
                                                     self.pitch_chunks["chunks"][-i][-1][0]]}
@@ -228,9 +224,9 @@ class TonicLastNote(Histogram, Data):
 
                         if (tonic_cand / (2 ** (2. / 53))) <= (last_note * times) <= (tonic_cand * (2 ** (2. / 53))) \
                                 and times < 3:
-                            print "Higher Octave"
-                            print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note * times), (
-                                tonic_cand * (2 ** (2. / 53)))
+                            # print "Higher Octave"
+                            # print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note * times), \
+                            #    (tonic_cand * (2 ** (2. / 53)))
                             self.tonic = tonic_cand
                             print "Tonic=", self.tonic
                             break
@@ -239,9 +235,9 @@ class TonicLastNote(Histogram, Data):
                         times = numpy.round(last_note / tonic_cand)
                         if (tonic_cand / (2 ** (2. / 53))) <= (last_note / times) <= (tonic_cand * (2 ** (2. / 53))) \
                                 and times < 3:
-                            print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note / times), \
-                                (tonic_cand * (2 ** (2. / 53)))
-                            print "Lower Octave"
+                            # print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note / times), \
+                            #    (tonic_cand * (2 ** (2. / 53)))
+                            # print "Lower Octave"
                             self.tonic = tonic_cand
                             print "Tonic=", self.tonic
                             break
