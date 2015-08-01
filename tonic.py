@@ -204,7 +204,7 @@ class TonicLastNote(Histogram, Data):
             last_chunk = [element[1] for element in self.pitch_chunks["chunks"][-i]]
 
             last_note = numpy.median(last_chunk)
-            self.peaks_list = sorted(self.peaks_list, key=lambda x: abs(last_note - x))
+            self.peaks_list = sorted(self.peaks_list, key=lambda x: numpy.abs(last_note - x))
 
             print "LastNote=", last_note
 
@@ -228,7 +228,9 @@ class TonicLastNote(Histogram, Data):
                             # print "Higher Octave"
                             # print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note * times), \
                             #    (tonic_cand * (2 ** (2. / 53)))
-                            self.tonic = tonic_cand
+                            self.tonic = {"estimated_tonic": tonic_cand,
+                                          "time_interval": [self.pitch_chunks["chunks"][-i][0][0],
+                                                            self.pitch_chunks["chunks"][-i][-1][0]]}
                             print "Tonic=", self.tonic
                             break
 
@@ -239,7 +241,9 @@ class TonicLastNote(Histogram, Data):
                             # print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note / times), \
                             #    (tonic_cand * (2 ** (2. / 53)))
                             # print "Lower Octave"
-                            self.tonic = tonic_cand
+                            self.tonic = {"estimated_tonic": tonic_cand,
+                                          "time_interval": [self.pitch_chunks["chunks"][-i][0][0],
+                                                            self.pitch_chunks["chunks"][-i][-1][0]]}
                             print "Tonic=", self.tonic
                             break
 
@@ -251,7 +255,7 @@ class TonicLastNote(Histogram, Data):
             plt.plot(self.x, self.y)
             plt.title('Histogram')
 
-            plt.vlines(self.tonic['estimated_tonic'], 0, numpy.max(numpy.max(self.y)))
+            plt.vlines(self.tonic['estimated_tonic'], 0.0001, numpy.max(self.y))
 
             plt.subplot(3, 1, 2)
             plt.plot([element[0] for element in self.data["pitch"]],
