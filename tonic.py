@@ -6,6 +6,7 @@ from pypeaks import Data
 
 import matplotlib.pyplot as plt
 
+
 class Histogram(object):
     def __init__(self, data, post_filter=True, freq_limit=False, bottom_limit=64, upper_limit=1024):
         # inputs
@@ -174,7 +175,6 @@ class TonicLastNote(Histogram, Data):
 
         # getting histograms 3 times more resolution
         Histogram.__init__(self, data, post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
-
         self.compute_histogram(times=3)
 
         # getting peaks with pypeaks library
@@ -193,14 +193,10 @@ class TonicLastNote(Histogram, Data):
         return array[idx]
 
     def compute_tonic(self, plot=False):
-        # if tonic is zero, it cannot be identified.
-
         global last_note
         i = 0
         while self.tonic is 0:
             i += 1
-            # print i
-
             last_chunk = [element[1] for element in self.pitch_chunks["chunks"][-i]]
 
             last_note = numpy.median(last_chunk)
@@ -212,7 +208,6 @@ class TonicLastNote(Histogram, Data):
                 tonic_cand = float(self.peaks_list[j])
 
                 if (tonic_cand / (2 ** (2. / 53))) <= last_note <= (tonic_cand * (2 ** (2. / 53))):
-                    # print "same octave"
                     self.tonic = {"estimated_tonic": tonic_cand,
                                   "time_interval": [self.pitch_chunks["chunks"][-i][0][0],
                                                     self.pitch_chunks["chunks"][-i][-1][0]]}
@@ -223,11 +218,8 @@ class TonicLastNote(Histogram, Data):
                     if last_note <= tonic_cand:
                         times = numpy.round(tonic_cand / last_note)
 
-                        if (tonic_cand / (2 ** (2. / 53))) <= (last_note * times) <= (tonic_cand * (2 ** (2. / 53))) \
-                                and times < 3:
-                            # print "Higher Octave"
-                            # print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note * times), \
-                            #    (tonic_cand * (2 ** (2. / 53)))
+                        if (tonic_cand / (2 ** (2. / 53))) <= (last_note * times) \
+                                <= (tonic_cand * (2 ** (2. / 53))) and times < 3:
                             self.tonic = {"estimated_tonic": tonic_cand,
                                           "time_interval": [self.pitch_chunks["chunks"][-i][0][0],
                                                             self.pitch_chunks["chunks"][-i][-1][0]]}
@@ -236,11 +228,8 @@ class TonicLastNote(Histogram, Data):
 
                     else:
                         times = numpy.round(last_note / tonic_cand)
-                        if (tonic_cand / (2 ** (2. / 53))) <= (last_note / times) <= (tonic_cand * (2 ** (2. / 53))) \
-                                and times < 3:
-                            # print (tonic_cand / (2 ** (2. / 53))), last_note, (last_note / times), \
-                            #    (tonic_cand * (2 ** (2. / 53)))
-                            # print "Lower Octave"
+                        if (tonic_cand / (2 ** (2. / 53))) <= (last_note / times) \
+                                <= (tonic_cand * (2 ** (2. / 53))) and times < 3:
                             self.tonic = {"estimated_tonic": tonic_cand,
                                           "time_interval": [self.pitch_chunks["chunks"][-i][0][0],
                                                             self.pitch_chunks["chunks"][-i][-1][0]]}
