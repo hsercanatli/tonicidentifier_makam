@@ -7,9 +7,10 @@ from numpy import arange
 from numpy import histogram
 from numpy import sum
 from numpy import median
+from numpy import where
 from pypeaks import Data
 import matplotlib.pyplot as plt
-
+from matplotlib.ticker import FormatStrFormatter
 
 class Histogram(object):
     def __init__(self, data, post_filter=True, freq_limit=False, bottom_limit=64, upper_limit=1024):
@@ -158,11 +159,14 @@ class TonicLastNote(Histogram, Data):
         return array[idx]
 
     def compute_tonic(self, plot=False):
+        """
+        plot function
+        """
         global last_note
-        i = 0
+        self.counter = 0
         while self.tonic is 0:
-            i += 1
-            last_chunk = [element[1] for element in self.pitch_chunks[-i]]
+            self.counter += 1
+            last_chunk = [element[1] for element in self.pitch_chunks[-self.counter]]
 
             last_note = median(last_chunk)
             self.peaks_list = sorted(self.peaks_list, key=lambda x: abs(last_note - x))
@@ -172,8 +176,8 @@ class TonicLastNote(Histogram, Data):
 
                 if (tonic_candi / (2 ** (2. / 53))) <= last_note <= (tonic_candi * (2 ** (2. / 53))):
                     self.tonic = {"estimated_tonic": tonic_candi,
-                                  "time_interval": [self.pitch_chunks[-i][0][0],
-                                                    self.pitch_chunks[-i][-1][0]]}
+                                  "time_interval": [self.pitch_chunks[-self.counter][0][0],
+                                                    self.pitch_chunks[-self.counter][-1][0]]}
                     print "Tonic=", self.tonic
                     break
 
@@ -184,8 +188,8 @@ class TonicLastNote(Histogram, Data):
                         if (tonic_candi / (2 ** (2. / 53))) <= (last_note * times) \
                                 <= (tonic_candi * (2 ** (2. / 53))) and times < 3:
                             self.tonic = {"estimated_tonic": tonic_candi,
-                                          "time_interval": [self.pitch_chunks[-i][0][0],
-                                                            self.pitch_chunks[-i][-1][0]]}
+                                          "time_interval": [self.pitch_chunks[-self.counter][0][0],
+                                                            self.pitch_chunks[-self.counter][-1][0]]}
                             print "Tonic=", self.tonic
                             break
 
@@ -194,36 +198,50 @@ class TonicLastNote(Histogram, Data):
                         if (tonic_candi / (2 ** (2. / 53))) <= (last_note / times) \
                                 <= (tonic_candi * (2 ** (2. / 53))) and times < 3:
                             self.tonic = {"estimated_tonic": tonic_candi,
-                                          "time_interval": [self.pitch_chunks[-i][0][0],
-                                                            self.pitch_chunks[-i][-1][0]]}
+                                          "time_interval": [self.pitch_chunks[-self.counter][0][0],
+                                                            self.pitch_chunks[-self.counter][-1][0]]}
                             print "Tonic=", self.tonic
                             break
 
         if plot:
-            plt.figure(num=None, figsize=(18, 8), dpi=80, facecolor='w', edgecolor='k')
-            plt.subplot(3, 1, 1)
-
-            plt.plot(self.x, self.y)
-            plt.title('Histogram')
-
-            plt.vlines(self.tonic['estimated_tonic'], 0.0001, max(self.y))
-
-            plt.subplot(3, 1, 2)
-            plt.plot([element[0] for element in self.data["pitch"]],
-                     [element[1] for element in self.data["pitch"]], 'o')
-
-            plt.vlines([element[0][0] for element in self.pitch_chunks], 0.001,
-                       max([element[1]] for element in self.data["pitch"]))
-            plt.title('Pitch')
-
-            plt.subplot(3, 1, 3)
-            plt.plot([element[0] for element in self.pitch_chunks[-i]],
-                     [element[1] for element in self.pitch_chunks[-i]])
-            plt.title("Last Chunk")
-
+            self.plot_tonic()
             print last_note
             print self.tonic
             print sorted(self.peaks_list)
 
             plt.show()
+
         return self.tonic
+
+    def plot_tonic(self):
+        fig, (ax1, ax2, ax3) = plt.subplots(3, num=None, figsize=(18, 8), dpi=80)
+        plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0, hspace=0.4)
+
+        # plot title
+        ax1.set_title('Recording Histogram')
+        ax1.set_xlabel('Frequency (Hz)')
+        ax1.set_ylabel('Frequency of occurrence')
+        # log scaling the x axis
+        ax1.set_xscale('log', basex=2, nonposx='clip')
+        ax1.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+        # recording histogram
+        ax1.plot(self.x, self.y, label='SongHist', ls='-', c='b', lw='1.5')
+        # tonic
+        ax1.plot(self.tonic['estimated_tonic'],
+                 self.y[where(self.x == self.tonic['estimated_tonic'])[0]], 'cD', ms=10)
+
+        # pitch track histogram
+        ax2.plot([element[0] for element in self.data["pitch"]], [element[1] for element in self.data["pitch"]],
+                 ls='-', c='r', lw='0.8')
+        ax2.vlines([element[0][0] for element in self.pitch_chunks], 0,
+                   max([element[1]] for element in self.data["pitch"]))
+        ax2.set_xlabel('Time (secs)')
+        ax2.set_ylabel('Frequency (Hz)')
+
+        ax3.plot([element[0] for element in self.pitch_chunks[-self.counter]],
+                 [element[1] for element in self.pitch_chunks[-self.counter]])
+        ax3.set_title("Last Chunk")
+        ax3.set_xlabel('Time (secs)')
+        ax3.set_ylabel('Frequency (Hz)')
+
+        plt.show()
