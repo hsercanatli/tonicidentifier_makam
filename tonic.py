@@ -138,6 +138,7 @@ class Histogram(object):
 
 class TonicLastNote(Histogram, Data):
     def __init__(self, data):
+        self.counter = 0
         self.data = data
 
         # getting histograms 3 times more resolution
@@ -163,7 +164,6 @@ class TonicLastNote(Histogram, Data):
         plot function
         """
         global last_note
-        self.counter = 0
         while self.tonic is 0:
             self.counter += 1
             last_chunk = [element[1] for element in self.pitch_chunks[-self.counter]]
@@ -243,5 +243,4 @@ class TonicLastNote(Histogram, Data):
         ax3.set_title("Last Chunk")
         ax3.set_xlabel('Time (secs)')
         ax3.set_ylabel('Frequency (Hz)')
-
         plt.show()
