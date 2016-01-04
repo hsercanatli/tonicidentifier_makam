@@ -12,10 +12,11 @@ from pypeaks import Data
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
+
 class Histogram(object):
-    def __init__(self, data, post_filter=True, freq_limit=False, bottom_limit=64, upper_limit=1024):
+    def __init__(self, pitch, post_filter=True, freq_limit=False, bottom_limit=64, upper_limit=1024):
         # inputs
-        self.pitch = data['pitch']
+        self.pitch = pitch
 
         self.post_filter = post_filter
         self.freq_limit = freq_limit
@@ -137,12 +138,12 @@ class Histogram(object):
 
 
 class TonicLastNote(Histogram, Data):
-    def __init__(self, data):
+    def __init__(self, pitch):
         self.counter = 0
-        self.data = data
+        self.pitch = pitch
 
         # getting histograms 3 times more resolution
-        Histogram.__init__(self, data, post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
+        Histogram.__init__(self, pitch, post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
         self.compute_histogram(times=3)
 
         # getting histogram peaks with pypeaks library
@@ -258,10 +259,9 @@ class TonicLastNote(Histogram, Data):
                  self.y[where(self.x == self.tonic['estimated_tonic'])[0]], 'cD', ms=10)
 
         # pitch track histogram
-        ax2.plot([element[0] for element in self.data["pitch"]], [element[1] for element in self.data["pitch"]],
-                 ls='-', c='r', lw='0.8')
+        ax2.plot([element[0] for element in self.pitch], [element[1] for element in self.pitch], ls='-', c='r', lw='0.8')
         ax2.vlines([element[0][0] for element in self.pitch_chunks], 0,
-                   max([element[1]] for element in self.data["pitch"]))
+                   max([element[1]] for element in self.pitch))
         ax2.set_xlabel('Time (secs)')
         ax2.set_ylabel('Frequency (Hz)')
 
