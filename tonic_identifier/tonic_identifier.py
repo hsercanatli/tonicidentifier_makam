@@ -16,8 +16,8 @@ class TonicLastNote(Histogram, Data):
         self.pitch = pitch
 
         # getting histograms 3 times more resolution
-        Histogram.__init__(self, pitch, post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
-        self.compute_histogram(times=3)
+        Histogram.__init__(self, post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
+        self.pitch_chunks = self.compute_histogram(pitch, times=3)
 
         # getting histogram peaks with pypeaks library
         Data.__init__(self, self.normal_histogram['bins'], self.normal_histogram['hist'], smoothness=3)
