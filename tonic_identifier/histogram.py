@@ -92,7 +92,7 @@ class Histogram(object):
         return [pitch_chunks[i][j] for i in range(len(pitch_chunks))
                       for j in range(len(pitch_chunks[i]))]
 
-    def compute_histogram(self, pitch, times=1):
+    def compute(self, pitch, times=1):
         """
         Computes the histogram for given pitch track
         """
