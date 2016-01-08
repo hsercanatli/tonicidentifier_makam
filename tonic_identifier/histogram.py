@@ -96,7 +96,6 @@ class Histogram(object):
         """
         Computes the histogram for given pitch track
         """
-        global min_logf0
         pitch = self.energy_filter(pitch)
 
         pitch_chunks = self.decompose_into_chunks(pitch)
