@@ -22,7 +22,7 @@ class TonicLastNote():
         idx = distance.index(min(distance))
         return array[idx]
 
-    def compute_tonic(self, pitch, plot=False):
+    def identify(self, pitch, plot=False):
         """
         plot function
         """
