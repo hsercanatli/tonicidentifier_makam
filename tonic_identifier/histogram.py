@@ -3,7 +3,9 @@ from numpy import log2
 from numpy import arange
 from numpy import histogram
 
-class Histogram(object):
+from pypeaks import Data
+
+class Histogram(Data):
     def __init__(self, post_filter=True, freq_limit=False, 
         bottom_limit=64, upper_limit=1024):
         
@@ -127,4 +129,9 @@ class Histogram(object):
         edges = [2 ** ((edges[i] + edges[i + 1]) / 2.) for i in range(len(edges) - 1)]
 
         self.normal_histogram = {'bins': edges, 'hist': hist}
+
+         # getting histogram peaks with pypeaks library
+        Data.__init__(self, self.normal_histogram['bins'], self.normal_histogram['hist'], smoothness=3)
+        self.get_peaks(method='slope')
+
         return pitch_chunks
