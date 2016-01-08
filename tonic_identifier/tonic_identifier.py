@@ -5,24 +5,14 @@ from numpy import median
 from numpy import where
 
 from histogram import Histogram
-from pypeaks import Data
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
-class TonicLastNote(Histogram, Data):
-    def __init__(self, pitch):
-        self.pitch = pitch
-
-        # getting histograms 3 times more resolution
-        Histogram.__init__(self, post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
-        self.pitch_chunks = self.compute(pitch, times=3)
-
-        # getting histogram peaks with pypeaks library
-        Data.__init__(self, self.normal_histogram['bins'], self.normal_histogram['hist'], smoothness=3)
-        self.get_peaks(method='slope')
-
-        self.peaks_list = self.peaks["peaks"][0]
+class TonicLastNote():
+    def __init__(self):
+        self.pitch = []
+        self.pitch_chunks = [[]]
         self.tonic = 0
         self.time_interval = None
 
@@ -32,10 +22,18 @@ class TonicLastNote(Histogram, Data):
         idx = distance.index(min(distance))
         return array[idx]
 
-    def compute_tonic(self, plot=False):
+    def compute_tonic(self, pitch, plot=False):
         """
         plot function
         """
+        self.pitch = pitch
+
+        # getting histograms 3 times more resolution
+        histo = Histogram(post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
+        self.pitch_chunks = histo.compute(pitch, times=3)
+
+        self.peaks_list = histo.peaks["peaks"][0]
+
         cnt = 0
         while self.tonic is 0:
             cnt += 1
@@ -80,11 +78,11 @@ class TonicLastNote(Histogram, Data):
         # octave correction
         temp_tonic = self.tonic['estimated_tonic'] / 2
         temp_candidate = self.find_nearest(self.peaks_list, temp_tonic)
-        temp_candidate_ind = [i for i, x in enumerate(self.peaks['peaks'][0]) if x == temp_candidate]
-        temp_candidate_occurence = self.peaks["peaks"][1][temp_candidate_ind[0]]
+        temp_candidate_ind = [i for i, x in enumerate(histo.peaks['peaks'][0]) if x == temp_candidate]
+        temp_candidate_occurence = histo.peaks["peaks"][1][temp_candidate_ind[0]]
 
-        tonic_ind = [i for i, x in enumerate(self.peaks['peaks'][0]) if x == self.tonic['estimated_tonic']]
-        tonic_occurrence = self.peaks["peaks"][1][tonic_ind[0]]
+        tonic_ind = [i for i, x in enumerate(histo.peaks['peaks'][0]) if x == self.tonic['estimated_tonic']]
+        tonic_occurrence = histo.peaks["peaks"][1][tonic_ind[0]]
 
         if (temp_candidate / (2 ** (1. / 53))) <= temp_tonic <= (temp_candidate * (2 ** (1. / 53))):
             if self.tonic['estimated_tonic'] >= 400:
