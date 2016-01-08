@@ -1,5 +1,3 @@
-from pypeaks import Data
-
 from numpy import delete
 from numpy import log2
 from numpy import arange
@@ -129,4 +127,3 @@ class Histogram(object):
         edges = [2 ** ((edges[i] + edges[i + 1]) / 2.) for i in range(len(edges) - 1)]
 
         self.normal_histogram = {'bins': edges, 'hist': hist}
-

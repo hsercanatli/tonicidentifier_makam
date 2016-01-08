@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'hsercanatli'
 
-from numpy import sum
 from numpy import median
 from numpy import where
 
