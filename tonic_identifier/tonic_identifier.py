@@ -22,7 +22,7 @@ class TonicLastNote():
         idx = distance.index(min(distance))
         return array[idx]
 
-    def identify(self, pitch, plot=False):
+    def identify(self, pitch, plot=False, verbose=False):
         """
         plot function
         """
@@ -34,9 +34,8 @@ class TonicLastNote():
 
         self.peaks_list = histo.peaks["peaks"][0]
 
-        cnt = 0
+        cnt = 1
         while self.tonic is 0:
-            cnt += 1
             last_chunk = [element[1] for element in self.pitch_chunks[-cnt]]
 
             last_note = median(last_chunk)
@@ -74,6 +73,7 @@ class TonicLastNote():
                                                             self.pitch_chunks[-cnt][-1][0]]}
                             print "Tonic=", self.tonic
                             break
+            cnt += 1
 
         # octave correction
         temp_tonic = self.tonic['estimated_tonic'] / 2
@@ -102,10 +102,12 @@ class TonicLastNote():
 
         if plot:
             self.plot_tonic()
+            plt.show()
+
+        if verbose:
             print last_note
             print self.tonic
             print sorted(self.peaks_list)
-            plt.show()
 
         return self.tonic
 
