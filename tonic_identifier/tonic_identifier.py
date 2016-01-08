@@ -12,7 +12,6 @@ from matplotlib.ticker import FormatStrFormatter
 
 class TonicLastNote(Histogram, Data):
     def __init__(self, pitch):
-        self.counter = 0
         self.pitch = pitch
 
         # getting histograms 3 times more resolution
@@ -37,9 +36,10 @@ class TonicLastNote(Histogram, Data):
         """
         plot function
         """
+        cnt = 0
         while self.tonic is 0:
-            self.counter += 1
-            last_chunk = [element[1] for element in self.pitch_chunks[-self.counter]]
+            cnt += 1
+            last_chunk = [element[1] for element in self.pitch_chunks[-cnt]]
 
             last_note = median(last_chunk)
             self.peaks_list = sorted(self.peaks_list, key=lambda x: abs(last_note - x))
@@ -49,8 +49,8 @@ class TonicLastNote(Histogram, Data):
 
                 if (tonic_candidate / (2 ** (2. / 53))) <= last_note <= (tonic_candidate * (2 ** (2. / 53))):
                     self.tonic = {"estimated_tonic": tonic_candidate,
-                                  "time_interval": [self.pitch_chunks[-self.counter][0][0],
-                                                    self.pitch_chunks[-self.counter][-1][0]]}
+                                  "time_interval": [self.pitch_chunks[-cnt][0][0],
+                                                    self.pitch_chunks[-cnt][-1][0]]}
                     print "Tonic=", self.tonic
                     break
 
@@ -61,8 +61,8 @@ class TonicLastNote(Histogram, Data):
                         if (tonic_candidate / (2 ** (2. / 53))) <= (last_note * times) \
                                 <= (tonic_candidate * (2 ** (2. / 53))) and times < 3:
                             self.tonic = {"estimated_tonic": tonic_candidate,
-                                          "time_interval": [self.pitch_chunks[-self.counter][0][0],
-                                                            self.pitch_chunks[-self.counter][-1][0]]}
+                                          "time_interval": [self.pitch_chunks[-cnt][0][0],
+                                                            self.pitch_chunks[-cnt][-1][0]]}
                             print "Tonic=", self.tonic
                             break
 
@@ -72,8 +72,8 @@ class TonicLastNote(Histogram, Data):
                         if (tonic_candidate / (2 ** (2. / 53))) <= (last_note / times) \
                                 <= (tonic_candidate * (2 ** (2. / 53))) and times < 3:
                             self.tonic = {"estimated_tonic": tonic_candidate,
-                                          "time_interval": [self.pitch_chunks[-self.counter][0][0],
-                                                            self.pitch_chunks[-self.counter][-1][0]]}
+                                          "time_interval": [self.pitch_chunks[-cnt][0][0],
+                                                            self.pitch_chunks[-cnt][-1][0]]}
                             print "Tonic=", self.tonic
                             break
 
@@ -90,15 +90,15 @@ class TonicLastNote(Histogram, Data):
             if self.tonic['estimated_tonic'] >= 400:
                 print "OCTAVE CORRECTED!!!!"
                 self.tonic = {"estimated_tonic": temp_candidate,
-                              "time_interval": [self.pitch_chunks[-self.counter][0][0],
-                                                self.pitch_chunks[-self.counter][-1][0]]}
+                              "time_interval": [self.pitch_chunks[-cnt][0][0],
+                                                self.pitch_chunks[-cnt][-1][0]]}
 
             if tonic_occurrence <= temp_candidate_occurence:
                 print "OCTAVE CORRECTED!!!!"
 
                 self.tonic = {"estimated_tonic": temp_candidate,
-                              "time_interval": [self.pitch_chunks[-self.counter][0][0],
-                                                self.pitch_chunks[-self.counter][-1][0]]}
+                              "time_interval": [self.pitch_chunks[-cnt][0][0],
+                                                self.pitch_chunks[-cnt][-1][0]]}
                 print self.tonic
         else: print "No octave correction!!!"
 
@@ -137,8 +137,8 @@ class TonicLastNote(Histogram, Data):
         ax2.set_xlabel('Time (secs)')
         ax2.set_ylabel('Frequency (Hz)')
 
-        ax3.plot([element[0] for element in self.pitch_chunks[-self.counter]],
-                 [element[1] for element in self.pitch_chunks[-self.counter]])
+        ax3.plot([element[0] for element in self.pitch_chunks[-1]],
+                 [element[1] for element in self.pitch_chunks[-1]])
         ax3.set_title("Last Chunk")
         ax3.set_xlabel('Time (secs)')
         ax3.set_ylabel('Frequency (Hz)')
