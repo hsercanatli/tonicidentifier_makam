@@ -4,10 +4,12 @@ __author__ = 'hsercanatli'
 from numpy import sum
 from numpy import median
 from numpy import where
+
+from histogram import Histogram
 from pypeaks import Data
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
-from histogram import Histogram
 
 class TonicLastNote(Histogram, Data):
     def __init__(self, pitch):
@@ -36,7 +38,6 @@ class TonicLastNote(Histogram, Data):
         """
         plot function
         """
-        global last_note
         while self.tonic is 0:
             self.counter += 1
             last_chunk = [element[1] for element in self.pitch_chunks[-self.counter]]
