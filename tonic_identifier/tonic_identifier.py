@@ -12,6 +12,7 @@ from matplotlib.ticker import FormatStrFormatter
 class TonicLastNote():
     def __init__(self):
         self.tonic = 0
+        self.stable_pitches = []
         self.time_interval = None
 
     @staticmethod
@@ -29,17 +30,17 @@ class TonicLastNote():
         histo = Histogram(post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
         pitch_chunks = histo.compute(pitch, times=3)
 
-        self.peaks_list = histo.peaks["peaks"][0]
+        self.stable_pitches = histo.peaks["peaks"][0]
 
         cnt = 1
         while self.tonic is 0:
             last_chunk = [element[1] for element in pitch_chunks[-cnt]]
 
             last_note = median(last_chunk)
-            self.peaks_list = sorted(self.peaks_list, key=lambda x: abs(last_note - x))
+            self.stable_pitches = sorted(self.stable_pitches, key=lambda x: abs(last_note - x))
 
-            for j in range(len(self.peaks_list)):
-                tonic_candidate = float(self.peaks_list[j])
+            for j in range(len(self.stable_pitches)):
+                tonic_candidate = float(self.stable_pitches[j])
 
                 if (tonic_candidate / (2 ** (2. / 53))) <= last_note <= (tonic_candidate * (2 ** (2. / 53))):
                     self.tonic = {"estimated_tonic": tonic_candidate,
@@ -74,7 +75,7 @@ class TonicLastNote():
 
         # octave correction
         temp_tonic = self.tonic['estimated_tonic'] / 2
-        temp_candidate = self.find_nearest(self.peaks_list, temp_tonic)
+        temp_candidate = self.find_nearest(self.stable_pitches, temp_tonic)
         temp_candidate_ind = [i for i, x in enumerate(histo.peaks['peaks'][0]) if x == temp_candidate]
         temp_candidate_occurence = histo.peaks["peaks"][1][temp_candidate_ind[0]]
 
@@ -104,11 +105,11 @@ class TonicLastNote():
         if verbose:
             print last_note
             print self.tonic
-            print sorted(self.peaks_list)
+            print sorted(self.stable_pitches)
 
-        return self.tonic
+        return self.tonic, pitch, pitch_chunks, histo
 
-    def plot_tonic(self, pitch, histo):
+    def plot(self, pitch, pitch_chunks, histo):
         fig, (ax1, ax2, ax3) = plt.subplots(3, num=None, figsize=(18, 8), dpi=80)
         plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0, hspace=0.4)
 
@@ -120,12 +121,12 @@ class TonicLastNote():
         ax1.set_xscale('log', basex=2, nonposx='clip')
         ax1.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         # recording histogram
-        ax1.plot(self.x, self.y, label='SongHist', ls='-', c='b', lw='1.5')
+        ax1.plot(histo.x, histo.y, label='SongHist', ls='-', c='b', lw='1.5')
         # peaks
         ax1.plot(histo.peaks['peaks'][0], histo.peaks['peaks'][1], 'cD', ms=6, c='r')
         # tonic
         ax1.plot(self.tonic['estimated_tonic'],
-                 self.y[where(self.x == self.tonic['estimated_tonic'])[0]], 'cD', ms=10)
+                 histo.y[where(histo.x == self.tonic['estimated_tonic'])[0]], 'cD', ms=10)
 
         # pitch track histogram
         ax2.plot([element[0] for element in pitch], [element[1] for element in pitch], ls='-', c='r', lw='0.8')
