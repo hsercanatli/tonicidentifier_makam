@@ -28,7 +28,7 @@ class TonicLastNote():
 
         # getting histograms 3 times more resolution
         histo = Histogram(post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
-        pitch_chunks = histo.compute(pitch, times=3)
+        pitch_chunks, normal_histo = histo.compute(pitch, times=3)
 
         self.stable_pitches = histo.peaks["peaks"][0]
 
@@ -99,8 +99,7 @@ class TonicLastNote():
         else: print "No octave correction!!!"
 
         if plot:
-            self.plot_tonic()
-            plt.show()
+            self.plot(pitch, pitch_chunks, histo)
 
         if verbose:
             print last_note
@@ -128,7 +127,7 @@ class TonicLastNote():
         ax1.plot(self.tonic['estimated_tonic'],
                  histo.y[where(histo.x == self.tonic['estimated_tonic'])[0]], 'cD', ms=10)
 
-        # pitch track histogram
+        # pitch histogram
         ax2.plot([element[0] for element in pitch], [element[1] for element in pitch], ls='-', c='r', lw='0.8')
         ax2.vlines([element[0][0] for element in pitch_chunks], 0,
                    max([element[1]] for element in pitch))

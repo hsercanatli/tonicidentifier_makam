@@ -15,9 +15,6 @@ class Histogram(Data):
         self.bottom_limit = bottom_limit
         self.upper_limit = upper_limit
 
-        # outputs
-        self.normal_histogram = {}
-
     @staticmethod
     def energy_filter(pitch, threshold=0.002):
         """
@@ -123,15 +120,16 @@ class Histogram(Data):
         edges = (arange(step_no + 1) * (1. / (3 * times * 53.))) + min_logf0
         # pitch histogram
         hist = histogram(log_pitch, edges)[0]
-        # normalization of the histogram
+
+        # normalize the histogram
         hist = [float(hist[i]) / sum(hist) for i in range(len(hist))]
-        # edges calculation
+
+        # edge calculation
         edges = [2 ** ((edges[i] + edges[i + 1]) / 2.) for i in range(len(edges) - 1)]
+        normal_histogram = {'x': edges, 'y': hist}
 
-        self.normal_histogram = {'bins': edges, 'hist': hist}
-
-         # getting histogram peaks with pypeaks library
-        Data.__init__(self, self.normal_histogram['bins'], self.normal_histogram['hist'], smoothness=3)
+        # get histogram peaks with pypeaks library
+        Data.__init__(self, normal_histogram['x'], normal_histogram['y'], smoothness=3)
         self.get_peaks(method='slope')
 
-        return pitch_chunks
+        return pitch_chunks, normal_histogram
