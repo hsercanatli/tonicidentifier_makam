@@ -3,13 +3,13 @@ __author__ = 'hsercanatli'
 
 from numpy import median
 from numpy import where
-
 from histogram import Histogram
+from pitchfilter.pitchfilter import PitchPostFilter
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FormatStrFormatter
+import matplotlib.ticker
 
-class TonicLastNote():
+class TonicLastNote:
     def __init__(self):
         self.tonic = 0
         self.stable_pitches = []
@@ -25,10 +25,12 @@ class TonicLastNote():
         """
         plot function
         """
+        flt = PitchPostFilter()
+        filtered_pitch = flt.run(pitch)
 
         # getting histograms 3 times more resolution
         histo = Histogram(post_filter=True, freq_limit=True, bottom_limit=64, upper_limit=1024)
-        pitch_chunks, normal_histo = histo.compute(pitch, times=3)
+        pitch_chunks, normal_histo = histo.compute(filtered_pitch, times=3)
 
         self.stable_pitches = histo.peaks["peaks"][0]
 
@@ -99,14 +101,14 @@ class TonicLastNote():
         else: print "No octave correction!!!"
 
         if plot:
-            self.plot(pitch, pitch_chunks, histo)
+            self.plot(filtered_pitch, pitch_chunks, histo)
 
         if verbose:
             print last_note
             print self.tonic
             print sorted(self.stable_pitches)
 
-        return self.tonic, pitch, pitch_chunks, histo
+        return self.tonic, filtered_pitch, pitch_chunks, histo
 
     def plot(self, pitch, pitch_chunks, histo):
         fig, (ax1, ax2, ax3) = plt.subplots(3, num=None, figsize=(18, 8), dpi=80)
@@ -118,7 +120,7 @@ class TonicLastNote():
         ax1.set_ylabel('Frequency of occurrence')
         # log scaling the x axis
         ax1.set_xscale('log', basex=2, nonposx='clip')
-        ax1.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+        ax1.xaxis.set_major_formatter(matplotlib.ticker.FormatStrFormatter('%d'))
         # recording histogram
         ax1.plot(histo.x, histo.y, label='SongHist', ls='-', c='b', lw='1.5')
         # peaks
