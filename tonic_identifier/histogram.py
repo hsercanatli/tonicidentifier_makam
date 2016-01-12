@@ -6,9 +6,8 @@ from numpy import histogram
 from pypeaks import Data
 
 class Histogram(Data):
-    def __init__(self, post_filter=True, freq_limit=False, 
-        bottom_limit=64, upper_limit=1024):
-        
+    def __init__(self, post_filter=True, freq_limit=False, bottom_limit=64, upper_limit=1024):
+
         # inputs
         self.post_filter = post_filter
         self.freq_limit = freq_limit
@@ -88,8 +87,7 @@ class Histogram(Data):
         """
         recomposes the given pitch chunks as a new pitch track
         """
-        return [pitch_chunks[i][j] for i in range(len(pitch_chunks))
-                      for j in range(len(pitch_chunks[i]))]
+        return [pitch_chunks[i][j] for i in range(len(pitch_chunks)) for j in range(len(pitch_chunks[i]))]
 
     def compute(self, pitch, times=1):
         """
