@@ -8,5 +8,5 @@ setup(name='makamtonicidentifier',
       description='An Automatic Tonic Identification Method for Turkish Makam Music Recordings',
       author='Hasan Sercan Atli',
       url='https://github.com/hsercanatli/tonic_identifier',
-      packages=['tonic_identifier'],
-)
+      packages=['tonic_identifier'], requires=['numpy', 'pypeaks']
+      )
