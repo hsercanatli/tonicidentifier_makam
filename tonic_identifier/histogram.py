@@ -4,6 +4,7 @@ from numpy import arange
 from numpy import histogram
 
 from pypeaks import Data
+from pitchfilter.pitchfilter import PitchPostFilter
 
 class Histogram(Data):
     def __init__(self, times=1, bottom_freq_limit=64, upper_freq_limit=1024,
@@ -16,37 +17,6 @@ class Histogram(Data):
         self.chunk_limit = chunk_limit
         self.bottom_limit = bottom_limit
         self.upper_limit = upper_limit
-
-    def decompose_into_chunks(self, pitch):
-        """
-        decomposes the given pitch track into the chunks.
-        """
-        pitch_chunks = []
-        temp_pitch = [pitch[0]]
-
-        # starts at the first sample
-        for i in range(1, len(pitch) - 1):
-            # separation of the zero chunks
-            if pitch[i][1] == 0:
-                if pitch[i + 1][1] == 0:
-                    temp_pitch.append(pitch[i + 1])
-
-                else:
-                    temp_pitch.append(pitch[i])
-                    pitch_chunks.append(temp_pitch)
-                    temp_pitch = []
-            # non-zero chunks
-            else:
-                interval = float(pitch[i + 1][1]) / float(pitch[i][1])
-                if self.bottom_limit < interval < self.upper_limit:
-                    temp_pitch.append(pitch[i])
-                else:
-                    temp_pitch.append(pitch[i])
-                    pitch_chunks.append(temp_pitch)
-                    temp_pitch = []
-        pitch_chunks.append(temp_pitch)
-
-        return self.post_filter_chunks(pitch_chunks)
 
     def post_filter_chunks(self, pitch_chunks):
         """
@@ -69,19 +39,14 @@ class Histogram(Data):
 
         return pitch_chunks
 
-    @staticmethod
-    def recompose_chunks(pitch_chunks):
-        """
-        recomposes the given pitch chunks as a new pitch track
-        """
-        return [pitch_chunks[i][j] for i in range(len(pitch_chunks)) for j in range(len(pitch_chunks[i]))]
-
     def compute(self, pitch):
         """
         Computes the histogram for given pitch track
         """
-        pitch_chunks = self.decompose_into_chunks(pitch)
-        pitch = self.recompose_chunks(pitch_chunks)
+        flt = PitchPostFilter.__init__(self)
+        pitch_chunks = flt.decompose_into_chunks(pitch)
+        self.post_filter_chunks(pitch_chunks)
+        pitch = flt.recompose_chunks(pitch_chunks)
 
         pitch = [sample[1] for sample in pitch]
 
