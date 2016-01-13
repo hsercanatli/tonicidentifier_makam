@@ -83,8 +83,6 @@ class Histogram(Data):
         pitch_chunks = self.decompose_into_chunks(pitch)
         pitch = self.recompose_chunks(pitch_chunks)
 
-        print len(pitch_chunks)
-
         pitch = [sample[1] for sample in pitch]
 
         # log2 of pitch track
