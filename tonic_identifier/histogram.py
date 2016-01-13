@@ -43,9 +43,10 @@ class Histogram(Data):
         """
         Computes the histogram for given pitch track
         """
-        flt = PitchPostFilter.__init__(self)
+        flt = PitchPostFilter()
         pitch_chunks = flt.decompose_into_chunks(pitch)
-        self.post_filter_chunks(pitch_chunks)
+        pitch_chunks = self.post_filter_chunks(pitch_chunks)
+
         pitch = flt.recompose_chunks(pitch_chunks)
 
         pitch = [sample[1] for sample in pitch]
