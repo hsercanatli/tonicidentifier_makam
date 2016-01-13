@@ -18,34 +18,13 @@ class Histogram(Data):
         self.bottom_limit = bottom_limit
         self.upper_limit = upper_limit
 
-    def post_filter_chunks(self, pitch_chunks):
-        """
-        Postfilter for the pitchChunks
-        deletes the zero chunks
-        deletes the chunks smaller than 60 samples(default)
-        """
-        # deleting Zero chunks
-        zero_chunks = [i for i in range(0, len(pitch_chunks)) if pitch_chunks[i][0][1] == 0]
-        pitch_chunks = delete(pitch_chunks, zero_chunks)
-
-        # deleting small Chunks
-        small_chunks = [i for i in range(0, len(pitch_chunks)) if len(pitch_chunks[i]) <= self.chunk_limit]
-        pitch_chunks = delete(pitch_chunks, small_chunks)
-
-        # frequency limit
-        limit_chunks = [i for i in range(0, len(pitch_chunks)) if pitch_chunks[i][0][1] >= self.upper_freq_limit or
-                        pitch_chunks[i][0][1] <= self.bottom_freq_limit]
-        pitch_chunks = delete(pitch_chunks, limit_chunks)
-
-        return pitch_chunks
-
     def compute(self, pitch):
         """
         Computes the histogram for given pitch track
         """
         flt = PitchPostFilter()
         pitch_chunks = flt.decompose_into_chunks(pitch)
-        pitch_chunks = self.post_filter_chunks(pitch_chunks)
+        pitch_chunks = flt.post_filter_chunks(pitch_chunks)
 
         pitch = flt.recompose_chunks(pitch_chunks)
 
