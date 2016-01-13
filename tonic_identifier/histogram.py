@@ -22,7 +22,8 @@ class Histogram(Data):
         """
         Computes the histogram for given pitch track
         """
-        flt = PitchPostFilter()
+        flt = PitchPostFilter(bottom_limit=self.bottom_limit, upper_limit=self.upper_limit,
+                              bottom_freq_limit=self.bottom_freq_limit, upper_freq_limit=self.upper_freq_limit)
         pitch_chunks = flt.decompose_into_chunks(pitch)
         pitch_chunks = flt.post_filter_chunks(pitch_chunks)
 
