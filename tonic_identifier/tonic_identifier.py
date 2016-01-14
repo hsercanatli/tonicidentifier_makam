@@ -91,7 +91,7 @@ class TonicLastNote:
                 octave_wrapped = 0
                 tonic = {"estimated_tonic": temp_candidate,
                          "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
-                print tonic
+
         else:
             print "No octave correction!!!"
             octave_wrapped = 1
@@ -107,11 +107,11 @@ class TonicLastNote:
         return_tonic = {
                         "value": tonic['estimated_tonic'],
                         "unit": "Hz",
-                        "estimatedInterval": tonic['time_interval'],
+                        "timeInterval": {"value":tonic['time_interval'], "unit":'sec'},
                         "timeUnit": "sec",
                         "octaveWrapped": octave_wrapped,
                         "procedure": "Tonic identification by detecting the last note",
-                        "reference": "Atli, H. S., Bozkurt B., & Senturk S. A method for tonic frequency identification of Turkish makam music recordings. 5th International Workshop on Folk Music Analysis (FMA), 2015."
+                        "reference": "Atlı, H. S., Bozkurt, B., Şentürk, S. (2015). A Method for Tonic Frequency Identification of Turkish Makam Music Recordings. In Proceedings of 5th International Workshop on Folk Music Analysis, pages 119–122, Paris, France."
                         }
 
         return return_tonic, pitch, pitch_chunks, histo
@@ -132,8 +132,8 @@ class TonicLastNote:
         # peaks
         ax1.plot(histo.peaks['peaks'][0], histo.peaks['peaks'][1], 'cD', ms=6, c='r')
         # tonic
-        ax1.plot(tonic['estimated_tonic'],
-                 histo.y[where(histo.x == tonic['estimated_tonic'])[0]], 'cD', ms=10)
+        ax1.plot(tonic['value'],
+                 histo.y[where(histo.x == tonic['value'])[0]], 'cD', ms=10)
 
         # pitch histogram
         ax2.plot([element[0] for element in pitch], [element[1] for element in pitch], ls='-', c='r', lw='0.8')
