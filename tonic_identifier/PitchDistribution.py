@@ -71,10 +71,10 @@ class PitchDistribution:
 		-------------------------------------------------------------------------"""
 		return (max(self.bins) == (1200 - self.step_size) and min(self.bins) == 0)
 
-	def detect_peaks(self):
+	def detect_peaks(self, min_val_ratio=0.05):
 		"""-------------------------------------------------------------------------
 		Finds the peak indices of the distribution. These are treated as tonic
-		candidates in higher order functions.
+		candidates in high level functions.
 		-------------------------------------------------------------------------"""
 		# Peak detection is handled by Essentia
 		detector = std.PeakDetection()
@@ -86,7 +86,13 @@ class PitchDistribution:
 		if(peak_idxs[0] == 0):
 			peak_idxs = np.delete(peak_idxs, [len(peak_idxs) - 1])
 			peak_vals = np.delete(peak_vals, [len(peak_vals) - 1])
-		return peak_idxs, peak_vals
+
+		# remove any peaks less than min_val_ratio
+		maxval = max(peak_vals)
+		peak_idxs = np.array(peak_idxs)[peak_vals > min_val_ratio*maxval]
+		peak_vals = np.array(peak_vals)[peak_vals > min_val_ratio*maxval]
+
+		return list(peak_idxs), list(peak_vals)
 
 	def shift(self, shift_idx):
 		"""-------------------------------------------------------------------------
