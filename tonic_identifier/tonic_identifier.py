@@ -24,6 +24,7 @@ class TonicLastNote:
         plot function
         """
         tonic = 0
+        octave_wrapped = 1
 
         # getting histograms 3 times more resolution
         histo = Histogram(times=3)
@@ -73,7 +74,7 @@ class TonicLastNote:
         temp_tonic = tonic['estimated_tonic'] / 2
         temp_candidate = self.find_nearest(self.stable_pitches, temp_tonic)
         temp_candidate_ind = [i for i, x in enumerate(histo.peaks['peaks'][0]) if x == temp_candidate]
-        temp_candidate_occurence = histo.peaks["peaks"][1][temp_candidate_ind[0]]
+        temp_candidate_occurrence = histo.peaks["peaks"][1][temp_candidate_ind[0]]
 
         tonic_ind = [i for i, x in enumerate(histo.peaks['peaks'][0]) if x == tonic['estimated_tonic']]
         tonic_occurrence = histo.peaks["peaks"][1][tonic_ind[0]]
@@ -81,19 +82,19 @@ class TonicLastNote:
         if (temp_candidate / (2 ** (1. / 53))) <= temp_tonic <= (temp_candidate * (2 ** (1. / 53))):
             if tonic['estimated_tonic'] >= 400:
                 print "OCTAVE CORRECTED!!!!"
-                octave_wrapped = 1
+                octave_wrapped = 0
                 tonic = {"estimated_tonic": temp_candidate,
                          "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
 
-            if tonic_occurrence <= temp_candidate_occurence:
+            if tonic_occurrence <= temp_candidate_occurrence:
                 print "OCTAVE CORRECTED!!!!"
-                octave_wrapped = 1
+                octave_wrapped = 0
                 tonic = {"estimated_tonic": temp_candidate,
                          "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
                 print tonic
         else:
             print "No octave correction!!!"
-            octave_wrapped = 0
+            octave_wrapped = 1
 
         if plot:
             self.plot(pitch, tonic, pitch_chunks, histo)
