@@ -81,15 +81,19 @@ class TonicLastNote:
         if (temp_candidate / (2 ** (1. / 53))) <= temp_tonic <= (temp_candidate * (2 ** (1. / 53))):
             if tonic['estimated_tonic'] >= 400:
                 print "OCTAVE CORRECTED!!!!"
+                octave_wrapped = 1
                 tonic = {"estimated_tonic": temp_candidate,
                          "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
 
             if tonic_occurrence <= temp_candidate_occurence:
                 print "OCTAVE CORRECTED!!!!"
+                octave_wrapped = 1
                 tonic = {"estimated_tonic": temp_candidate,
                          "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
                 print tonic
-        else: print "No octave correction!!!"
+        else:
+            print "No octave correction!!!"
+            octave_wrapped = 0
 
         if plot:
             self.plot(pitch, tonic, pitch_chunks, histo)
@@ -99,7 +103,17 @@ class TonicLastNote:
             print tonic
             print sorted(self.stable_pitches)
 
-        return tonic, pitch, pitch_chunks, histo
+        return_tonic = {
+                        "value": tonic['estimated_tonic'],
+                        "unit": "Hz",
+                        "estimatedInterval": tonic['time_interval'],
+                        "timeUnit": "sec",
+                        "octaveWrapped": octave_wrapped,
+                        "procedure": "Tonic identification by detecting the last note",
+                        "reference": "Atli, H. S., Bozkurt B., & Senturk S. A method for tonic frequency identification of Turkish makam music recordings. 5th International Workshop on Folk Music Analysis (FMA), 2015."
+                        }
+
+        return return_tonic, pitch, pitch_chunks, histo
 
     def plot(self, pitch, tonic, pitch_chunks, histo):
         fig, (ax1, ax2, ax3) = plt.subplots(3, num=None, figsize=(18, 8), dpi=80)
