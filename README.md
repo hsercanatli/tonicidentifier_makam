@@ -1,6 +1,5 @@
 # tonic_identifier
 An Automatic Tonic Identification Method for Turkish Makam Music Recordings
-Predominant melody extraction for makam music
 
 This repository hosts the the implementation of the pitch identification method proposed for makam music in:
 
