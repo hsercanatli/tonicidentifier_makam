@@ -83,7 +83,6 @@ class TonicLastNote:
                                 <= (tonic_candidate * (2 ** (2. / 53))) and times < 3:
                             tonic = {"estimated_tonic": tonic_candidate,
                                      "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
-                            print "Tonic=", tonic
                             break
 
                     else:
@@ -93,7 +92,6 @@ class TonicLastNote:
                                 <= (tonic_candidate * (2 ** (2. / 53))) and times < 3:
                             tonic = {"estimated_tonic": tonic_candidate,
                                      "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
-                            print "Tonic=", tonic
                             break
             cnt += 1
 
