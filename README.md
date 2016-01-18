@@ -1,10 +1,10 @@
 # tonic_identifier
 An Automatic Tonic Identification Method for Turkish Makam Music Recordings
-Predominant melody extraction for makam music
 
-This repository hosts the the implementation of the pitch identification method proposed for makam music in:
+This repository hosts the implementation of the tonic identification method proposed for makam music in:
 
-_Atlı, H. S., Bozkurt B., and Şentürk S.(2015). A method for tonic frequency identification of Turkish makam music recordings. 5th International Workshop on Folk Music Analysis (FMA)._
+_Atlı, H. S., Bozkurt B., and Şentürk S. (2015). A method for tonic frequency identification of Turkish makam music recordings. 5th International Workshop on Folk Music Analysis (FMA)._
+
 If you are using this identifier please cite the above paper. 
 
 Tonic is the final tone in the Turkish makam music performances. The methodology implemented in this repository is based on detecting the last note in the recording and estimating its frequency. 

@@ -72,8 +72,7 @@ class TonicLastNote:
                 if (tonic_candidate / (2 ** (2. / 53))) <= last_note <= (tonic_candidate * (2 ** (2. / 53))):
                     tonic = {"estimated_tonic": tonic_candidate,
                              "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
-                    print "Tonic=", tonic
-                    break
+                    break  #  tonic found
 
                 elif last_note >= tonic_candidate or last_note <= tonic_candidate:
                     if last_note <= tonic_candidate:
@@ -83,7 +82,7 @@ class TonicLastNote:
                                 <= (tonic_candidate * (2 ** (2. / 53))) and times < 3:
                             tonic = {"estimated_tonic": tonic_candidate,
                                      "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
-                            break
+                            break  #  tonic found
 
                     else:
                         times = round(last_note / tonic_candidate)
@@ -92,7 +91,7 @@ class TonicLastNote:
                                 <= (tonic_candidate * (2 ** (2. / 53))) and times < 3:
                             tonic = {"estimated_tonic": tonic_candidate,
                                      "time_interval": [pitch_chunks[-cnt][0][0], pitch_chunks[-cnt][-1][0]]}
-                            break
+                            break  #  tonic found
             cnt += 1
 
         # octave correction
@@ -134,7 +133,11 @@ class TonicLastNote:
                         "timeUnit": "sec",
                         "octaveWrapped": octave_wrapped,
                         "procedure": "Tonic identification by detecting the last note",
-                        "reference": "Atlı, H. S., Bozkurt, B., Şentürk, S. (2015). A Method for Tonic Frequency Identification of Turkish Makam Music Recordings. In Proceedings of 5th International Workshop on Folk Music Analysis, pages 119–122, Paris, France."
+                        "reference": 'Atlı, H. S., Bozkurt, B., Şentürk, S. (2015). ' 
+                                     'A Method for Tonic Frequency Identification of ' 
+                                     'Turkish Makam Music Recordings. In Proceedings of '
+                                     '5th International Workshop on Folk Music Analysis, '
+                                     'pages 119–122, Paris, France.'
                         }
 
         if plot:
@@ -165,7 +168,7 @@ class TonicLastNote:
 
         # peaks
         peaks = distribution.detect_peaks()
-        ax1.plot(peaks[0], peaks[1], 'cD', ms=6, c='r')
+        ax1.plot(distribution.bins[peaks[0]], peaks[1], 'cD', ms=6, c='r')
 
         # tonic
         ax1.plot(tonic['value'],
