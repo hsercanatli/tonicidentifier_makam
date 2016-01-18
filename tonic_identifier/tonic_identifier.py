@@ -98,10 +98,13 @@ class TonicLastNote:
         # octave correction
         temp_tonic = tonic['estimated_tonic'] / 2
         temp_candidate = self.find_nearest(stable_pitches, temp_tonic)
-        temp_candidate_ind = [i for i, x in enumerate(stable_pitches) if x == temp_candidate]
+
+        closest_temp_cand = self.find_nearest(peaks[0], temp_candidate)
+        temp_candidate_ind = [i for i, x in enumerate(peaks[0]) if x == closest_temp_cand]
         temp_candidate_occurrence = peaks[1][temp_candidate_ind[0]]
 
-        tonic_ind = [i for i, x in enumerate(stable_pitches) if x == tonic['estimated_tonic']]
+        closest_peak = self.find_nearest(peaks[0], tonic['estimated_tonic'])
+        tonic_ind = [i for i, x in enumerate(peaks[0]) if x == closest_peak]
         tonic_occurrence = peaks[1][tonic_ind[0]]
 
         if (temp_candidate / (2 ** (1. / 53))) <= temp_tonic <= (temp_candidate * (2 ** (1. / 53))):
