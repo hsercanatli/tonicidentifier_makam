@@ -1,6 +1,8 @@
 # tonic_identifier
 An Automatic Tonic Identification Method for Turkish Makam Music Recordings
 
+Introduction
+=======
 This repository hosts the implementation of the tonic identification method proposed for makam music in:
 
 _Atlı, H. S., Bozkurt B., and Şentürk S. (2015). A method for tonic frequency identification of Turkish makam music recordings. 5th International Workshop on Folk Music Analysis (FMA)._
