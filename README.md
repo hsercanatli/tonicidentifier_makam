@@ -1,4 +1,4 @@
-# tonic_identifier
+# makamtonicidentifier
 An Automatic Tonic Identification Method for Turkish Makam Music Recordings
 
 Introduction
