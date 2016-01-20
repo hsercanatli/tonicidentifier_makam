@@ -10,6 +10,7 @@ from pitchfilter.pitchfilter import PitchPostFilter
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 
+
 class TonicLastNote:
     def __init__(self, kernel_width=7.5, step_size=7.5, min_freq=64, max_freq=1024, 
                  lower_interval_thres=0.965, upper_interval_thres=1.035, min_chunk_size=60):
