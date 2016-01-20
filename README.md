@@ -1,4 +1,4 @@
-# makamtonicidentifier
+# tonicidentifier_makam
 An Automatic Tonic Identification Method for Turkish Makam Music Recordings
 
 Introduction
@@ -15,7 +15,7 @@ Usage
 =======
 ```python
 import json
-from tonic_identifier.tonic_identifier import TonicLastNote
+from tonicidentifier.tonicidentifier import TonicLastNote
 from pitchfilter.pitchfilter import PitchPostFilter
 
 pitch = json.load(open("sample_data/cab08727-d5c2-4fda-9d96-d107915a85ec.json", 'r'))['pitch']
