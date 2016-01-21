@@ -38,8 +38,8 @@ class PitchDistribution:
 		               distribution. If the tonic of a recording is annotated,
 		               this is variable that stores it.
 		-------------------------------------------------------------------------"""
-		self.bins = pd_bins
-		self.vals = pd_vals
+		self.bins = np.array(pd_bins)
+		self.vals = np.array(pd_vals)
 		self.kernel_width = kernel_width
 		self.ref_freq = ref_freq
 
