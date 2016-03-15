@@ -10,6 +10,6 @@ setup(name='makamtonicidentifier',
     packages=['tonicidentifier'], 
     install_requires=[
         "numpy",
-        "matplotlib"
+        "matplotlib",
     ],
 )
