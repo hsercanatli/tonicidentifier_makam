@@ -15,13 +15,13 @@ Usage
 =======
 ```python
 import json
-from tonicidentifier.tonicidentifier import TonicLastNote
-from pitchfilter.pitchfilter import PitchPostFilter
+from tonicidentifier.TonicLastNote import TonicLastNote
+from pitchfilter.PitchFilter import PitchFilter
 
 pitch = json.load(open("sample_data/cab08727-d5c2-4fda-9d96-d107915a85ec.json", 'r'))['pitch']
 
 # Post process the pitch track to get rid of spurious pitch estimations and correct octave errors
-flt = PitchPostFilter()
+flt = PitchFilter()
 pitch = flt.run(pitch)
 
 tonic_identifier = TonicLastNote()
