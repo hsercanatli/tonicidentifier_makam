@@ -162,8 +162,7 @@ class TonicLastNote:
                                      'Identification of Turkish Makam Music '
                                      'Recordings. In Proceedings of 5th '
                                      'International Workshop on Folk Music '
-                                     'Analysis, pages 119–122, Paris, France.'
-                        }
+                                     'Analysis, pages 119–122, Paris, France.'}
 
         if plot:
             self.plot(pitch, return_tonic, pitch_chunks, distribution)

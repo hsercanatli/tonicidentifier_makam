@@ -1,3 +1,1 @@
-numpy
-matplotlib
 git+https://github.com/altugkarakurt/ModeTonicEstimation.git#egg=modetonicestimation
