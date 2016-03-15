@@ -50,7 +50,8 @@ class TonicLastNote:
         temp_cent_vals = hz_to_cent(pitch[:, 1], dummy_freq)
 
         # compute the pitch distribution and distribution peaks
-        distribution = generate_pd(temp_cent_vals, ref_freq=dummy_freq,
+        distribution = generate_pd(
+            temp_cent_vals, ref_freq=dummy_freq,
             smooth_factor=self.kernel_width, step_size=self.step_size)
         distribution.bins = cent_to_hz(distribution.bins, dummy_freq)
 
@@ -149,9 +150,7 @@ class TonicLastNote:
                 print "No octave correction!!!"
             octave_wrapped = 1
 
-        return_tonic = {
-                        "value": tonic['estimated_tonic'],
-                        "unit": "Hz",
+        return_tonic = {"value": tonic['estimated_tonic'], "unit": "Hz",
                         "timeInterval": {"value": tonic['time_interval'],
                                          "unit": 'sec'},
                         "timeUnit": "sec",
