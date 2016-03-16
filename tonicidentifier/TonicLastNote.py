@@ -153,7 +153,6 @@ class TonicLastNote(object):
         return_tonic = {"value": tonic['estimated_tonic'], "unit": "Hz",
                         "timeInterval": {"value": tonic['time_interval'],
                                          "unit": 'sec'},
-                        "timeUnit": "sec",
                         "octaveWrapped": octave_wrapped,
                         "procedure": "Tonic identification by detecting the "
                                      "last note",
