@@ -4,7 +4,6 @@ from numpy import where
 import numpy as np
 from pitchfilter.PitchFilter import PitchFilter
 from modetonicestimation.PitchDistribution import PitchDistribution
-from modetonicestimation.Converter import Converter
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 from copy import deepcopy
@@ -56,8 +55,8 @@ class TonicLastNote(object):
         distribution = PitchDistribution.from_hz_pitch(
             pitch_sliced[:, 1], ref_freq=dummy_freq,
             smooth_factor=self.kernel_width, step_size=self.step_size)
-        distribution.bins = Converter.cent_to_hz(distribution.bins, dummy_freq)
-        distribution.ref_freq = None
+
+        distribution.cent_to_hz()
 
         # get the stable pitches
         peaks = distribution.detect_peaks()
