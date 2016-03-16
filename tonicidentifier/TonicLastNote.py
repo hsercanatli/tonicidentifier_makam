@@ -73,7 +73,7 @@ class TonicLastNote(object):
 
             last_note = median(last_chunk)
             stable_pitches = sorted(stable_pitches,
-                                    key=lambda x: abs(last_note - x))
+                                    key=lambda sp: abs(last_note - sp))
 
             for j in range(len(stable_pitches)):
                 tonic_candidate = float(stable_pitches[j])
@@ -156,18 +156,17 @@ class TonicLastNote(object):
                         "octaveWrapped": octave_wrapped,
                         "procedure": "Tonic identification by detecting the "
                                      "last note",
-                        "reference": 'Atlı, H. S., Bozkurt, B., Şentürk, S. '
-                                     '(2015). A Method for Tonic Frequency '
-                                     'Identification of Turkish Makam Music '
-                                     'Recordings. In Proceedings of 5th '
-                                     'International Workshop on Folk Music '
-                                     'Analysis, pages 119–122, Paris, France.'}
+                        "citation": 'Atlı, H. S., Bozkurt, B., Şentürk, S. '
+                                    '(2015). A Method for Tonic Frequency '
+                                    'Identification of Turkish Makam Music '
+                                    'Recordings. In Proceedings of 5th '
+                                    'International Workshop on Folk Music '
+                                    'Analysis, pages 119–122, Paris, France.'}
 
         if plot:
             self.plot(pitch, return_tonic, pitch_chunks, distribution)
 
         if verbose:
-            print last_note
             print tonic
             print sorted(stable_pitches)
 
