@@ -2,8 +2,8 @@
 
 from setuptools import setup
 
-setup(name='makamtonicidentifier',
-    version='1.2',
+setup(name='tonicidentifier_makam',
+    version='1.2.1',
     description='An Automatic Tonic Identification Method for Turkish Makam Music Recordings',
     author='Hasan Sercan Atli',
     url='https://github.com/hsercanatli/tonic_identifier',
