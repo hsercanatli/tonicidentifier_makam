@@ -57,6 +57,7 @@ class TonicLastNote(object):
             pitch_sliced[:, 1], ref_freq=dummy_freq,
             smooth_factor=self.kernel_width, step_size=self.step_size)
         distribution.bins = Converter.cent_to_hz(distribution.bins, dummy_freq)
+        distribution.ref_freq = None
 
         # get the stable pitches
         peaks = distribution.detect_peaks()
