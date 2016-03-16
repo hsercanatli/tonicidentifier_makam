@@ -49,12 +49,12 @@ class TonicLastNote(object):
         # for performance reasons
         pitch_sliced = np.array(deepcopy(pitch))
         pitch_len = pitch_sliced.shape[0]
-        pitch_sliced = pitch_sliced[-int(pitch_len * 0.1):,:]
+        pitch_sliced = pitch_sliced[-int(pitch_len * 0.1):, :]
 
         # compute the pitch distribution and distribution peaks
         dummy_freq = 440.0
         distribution = PitchDistribution.from_hz_pitch(
-            pitch_sliced[:,1], ref_freq=dummy_freq,
+            pitch_sliced[:, 1], ref_freq=dummy_freq,
             smooth_factor=self.kernel_width, step_size=self.step_size)
         distribution.bins = Converter.cent_to_hz(distribution.bins, dummy_freq)
 
