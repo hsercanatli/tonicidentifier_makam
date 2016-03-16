@@ -3,8 +3,8 @@ from numpy import median
 from numpy import where
 import numpy as np
 from pitchfilter.PitchFilter import PitchFilter
-from modetonicestimation.ModeFunctions import generate_pd
-from modetonicestimation.ModeFunctions import cent_to_hz, hz_to_cent
+from modetonicestimation.PitchDistribution import PitchDistribution
+from modetonicestimation.Converter import Converter
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 
@@ -47,13 +47,12 @@ class TonicLastNote(object):
         # convert Hz to cent using a dummy value for distribution computation
         dummy_freq = 440.0
         pitch = np.array(pitch)
-        temp_cent_vals = hz_to_cent(pitch[:, 1], dummy_freq)
 
         # compute the pitch distribution and distribution peaks
-        distribution = generate_pd(
-            temp_cent_vals, ref_freq=dummy_freq,
+        distribution = PitchDistribution.from_hz_pitch(
+            pitch[:, 1], ref_freq=dummy_freq,
             smooth_factor=self.kernel_width, step_size=self.step_size)
-        distribution.bins = cent_to_hz(distribution.bins, dummy_freq)
+        distribution.bins = Converter.cent_to_hz(distribution.bins, dummy_freq)
 
         # get the stable pitches
         peaks = distribution.detect_peaks()
@@ -170,9 +169,10 @@ class TonicLastNote(object):
             print tonic
             print sorted(stable_pitches)
 
-        return return_tonic, pitch, pitch_chunks, distribution, stable_pitches
+        return return_tonic
 
-    def plot(self, pitch, tonic, pitch_chunks, distribution):
+    @staticmethod
+    def plot(pitch, tonic, pitch_chunks, distribution):
         fig, (ax1, ax2, ax3) = plt.subplots(3, num=None, figsize=(18, 8),
                                             dpi=80)
         plt.subplots_adjust(left=None, bottom=None, right=None, top=None,
