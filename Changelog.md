@@ -1,5 +1,6 @@
-#### *v1.1*
+#### *v1.2*
  - Added pitch slicing in the last mote method for performance 
+ - Updated the imports from modetonicestimation repo
 
 #### *v1.1*
 - Refactoring according to PEP 8 (Closes #12)
