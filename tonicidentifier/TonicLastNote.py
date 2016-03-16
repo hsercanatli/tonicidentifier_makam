@@ -7,6 +7,7 @@ from modetonicestimation.PitchDistribution import PitchDistribution
 from modetonicestimation.Converter import Converter
 import matplotlib.pyplot as plt
 import matplotlib.ticker
+from copy import deepcopy
 
 __author__ = 'hsercanatli'
 
@@ -44,13 +45,16 @@ class TonicLastNote(object):
         tonic = 0
         octave_wrapped = 1
 
-        # convert Hz to cent using a dummy value for distribution computation
-        dummy_freq = 440.0
-        pitch = np.array(pitch)
+        # slice the pitch track to only include the last 10% of the track
+        # for performance reasons
+        pitch_sliced = np.array(deepcopy(pitch))
+        pitch_len = pitch_sliced.shape[0]
+        pitch_sliced = pitch_sliced[-int(pitch_len * 0.1):,:]
 
         # compute the pitch distribution and distribution peaks
+        dummy_freq = 440.0
         distribution = PitchDistribution.from_hz_pitch(
-            pitch[:, 1], ref_freq=dummy_freq,
+            pitch_sliced[:,1], ref_freq=dummy_freq,
             smooth_factor=self.kernel_width, step_size=self.step_size)
         distribution.bins = Converter.cent_to_hz(distribution.bins, dummy_freq)
 
@@ -63,7 +67,7 @@ class TonicLastNote(object):
         flt = PitchFilter(lower_interval_thres=self.lower_interval_thres,
                           upper_interval_thres=self.upper_interval_thres,
                           min_freq=self.min_freq, max_freq=self.max_freq)
-        pitch_chunks = flt.decompose_into_chunks(pitch)
+        pitch_chunks = flt.decompose_into_chunks(pitch_sliced)
         pitch_chunks = flt.post_filter_chunks(pitch_chunks)
 
         cnt = 1
@@ -163,13 +167,10 @@ class TonicLastNote(object):
                                     'Analysis, pages 119–122, Paris, France.'}
 
         if plot:
-            self.plot(pitch, return_tonic, pitch_chunks, distribution)
+            self.plot(pitch_sliced, return_tonic, pitch_chunks, distribution)
 
-        if verbose:
-            print tonic
-            print sorted(stable_pitches)
-
-        return return_tonic
+        return (return_tonic, pitch_sliced, pitch_chunks, distribution,
+                stable_pitches)
 
     @staticmethod
     def plot(pitch, tonic, pitch_chunks, distribution):
