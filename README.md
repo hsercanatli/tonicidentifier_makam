@@ -25,7 +25,7 @@ flt = PitchFilter()
 pitch = flt.run(pitch)
 
 tonic_identifier = TonicLastNote()
-tonic, pitch, pitch_chunks, distribution, stable_pitches = tonic_identifier.identify(pitch)
+tonic, pitch_sliced, pitch_chunks, distribution, stable_pitches = tonic_identifier.identify(pitch)
 print tonic
 ```
 
