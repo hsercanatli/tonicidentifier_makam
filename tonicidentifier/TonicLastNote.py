@@ -139,7 +139,7 @@ class TonicLastNote(object):
         #         tonic = {"estimated_tonic": temp_candidate,
         #                  "time_interval": [pitch_chunks[-cnt][0][0],
         #                                    pitch_chunks[-cnt][-1][0]]}
-        # 
+        #
         #     if tonic_occurrence <= temp_candidate_occurrence:
         #         if verbose:
         #             print "OCTAVE CORRECTED!!!!"
