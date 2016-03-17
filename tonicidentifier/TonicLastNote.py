@@ -117,41 +117,40 @@ class TonicLastNote(object):
                             break  # tonic found
             cnt += 1
 
-        # octave correction
-        temp_tonic = tonic['estimated_tonic'] / 2
-        temp_candidate = self.find_nearest(stable_pitches, temp_tonic)
-
-        closest_temp_cand = self.find_nearest(peaks[0], temp_candidate)
-        temp_candidate_ind = [i for i, x in enumerate(peaks[0])
-                              if x == closest_temp_cand]
-        temp_candidate_occurrence = peaks[1][temp_candidate_ind[0]]
-
-        closest_peak = self.find_nearest(peaks[0], tonic['estimated_tonic'])
-        tonic_ind = [i for i, x in enumerate(peaks[0]) if x == closest_peak]
-        tonic_occurrence = peaks[1][tonic_ind[0]]
-
-        if (temp_candidate / (2 ** (1. / 53))) <= temp_tonic <= \
-                (temp_candidate * (2 ** (1. / 53))):
-            if tonic['estimated_tonic'] >= 400:
-                if verbose:
-                    print "OCTAVE CORRECTED!!!!"
-                octave_wrapped = 0
-                tonic = {"estimated_tonic": temp_candidate,
-                         "time_interval": [pitch_chunks[-cnt][0][0],
-                                           pitch_chunks[-cnt][-1][0]]}
-
-            if tonic_occurrence <= temp_candidate_occurrence:
-                if verbose:
-                    print "OCTAVE CORRECTED!!!!"
-                octave_wrapped = 0
-                tonic = {"estimated_tonic": temp_candidate,
-                         "time_interval": [pitch_chunks[-cnt][0][0],
-                                           pitch_chunks[-cnt][-1][0]]}
-
-        else:
-            if verbose:
-                print "No octave correction!!!"
-            octave_wrapped = 1
+        # # octave correction
+        # temp_tonic = tonic['estimated_tonic'] / 2
+        # temp_candidate = self.find_nearest(stable_pitches, temp_tonic)
+        #
+        # closest_temp_cand = self.find_nearest(peaks[0], temp_candidate)
+        # temp_candidate_ind = [i for i, x in enumerate(peaks[0])
+        #                       if x == closest_temp_cand]
+        # temp_candidate_occurrence = peaks[1][temp_candidate_ind[0]]
+        #
+        # closest_peak = self.find_nearest(peaks[0], tonic['estimated_tonic'])
+        # tonic_ind = [i for i, x in enumerate(peaks[0]) if x == closest_peak]
+        # tonic_occurrence = peaks[1][tonic_ind[0]]
+        #
+        # if (temp_candidate / (2 ** (1. / 53))) <= temp_tonic <= \
+        #         (temp_candidate * (2 ** (1. / 53))):
+        #     if tonic['estimated_tonic'] >= 400:
+        #         if verbose:
+        #             print "OCTAVE CORRECTED!!!!"
+        #         octave_wrapped = 0
+        #         tonic = {"estimated_tonic": temp_candidate,
+        #                  "time_interval": [pitch_chunks[-cnt][0][0],
+        #                                    pitch_chunks[-cnt][-1][0]]}
+        # 
+        #     if tonic_occurrence <= temp_candidate_occurrence:
+        #         if verbose:
+        #             print "OCTAVE CORRECTED!!!!"
+        #         octave_wrapped = 0
+        #         tonic = {"estimated_tonic": temp_candidate,
+        #                  "time_interval": [pitch_chunks[-cnt][0][0],
+        #                                    pitch_chunks[-cnt][-1][0]]}
+        # else:
+        #     if verbose:
+        #         print "No octave correction!!!"
+        #     octave_wrapped = 1
 
         return_tonic = {"value": tonic['estimated_tonic'], "unit": "Hz",
                         "timeInterval": {"value": tonic['time_interval'],
