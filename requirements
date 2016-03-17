@@ -1,2 +1,2 @@
 git+https://github.com/altugkarakurt/ModeTonicEstimation.git#egg=modetonicestimation
-git+https://github.com/hsercanatli/pitch-post-filter.git@v1.2#egg=pitchfilter
+git+https://github.com/hsercanatli/pitch-post-filter.git@v1.2.1#egg=pitchfilter

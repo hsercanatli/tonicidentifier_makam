@@ -13,14 +13,16 @@ __author__ = 'hsercanatli'
 
 
 class TonicLastNote(object):
-    def __init__(self, kernel_width=7.5, step_size=7.5, min_freq=64,
-                 max_freq=1024, lower_interval_thres=0.965,
+    def __init__(self, stable_pitch_dev=25, kernel_width=7.5, step_size=7.5,
+                 min_freq=64, max_freq=1024, lower_interval_thres=0.965,
                  upper_interval_thres=1.035, min_chunk_size=60):
-
+        self.stable_pitch_dev = stable_pitch_dev  # cents, the max difference
+        # between two pitches to be considered the same. Used in tonic
+        # octave correction, 25 cents
         self.kernel_width = kernel_width  # cents, kernel width of the pitch
-        # distribution, ~1/3 Holderian comma
+        # distribution, 7-5 cents ~1/3 Holderian comma
         self.step_size = step_size  # cents, step size of the bins of the pitch
-        # distribution, ~1/3 Holderian comma
+        # distribution, 7-5 cents ~1/3 Holderian comma
 
         self.min_freq = min_freq  # minimum frequency allowed
         self.max_freq = max_freq  # maximum frequency allowed
@@ -42,8 +44,6 @@ class TonicLastNote(object):
         Identify the tonic by detecting the last note and extracting the
         frequency
         """
-        tonic = 0
-
         # slice the pitch track to only include the last 10% of the track
         # for performance reasons
         pitch_sliced = np.array(deepcopy(pitch))
@@ -53,15 +53,8 @@ class TonicLastNote(object):
         # compute the pitch distribution and distribution peaks
         dummy_freq = 440.0
         distribution = PitchDistribution.from_hz_pitch(
-            pitch_sliced[:, 1], ref_freq=dummy_freq,
-            smooth_factor=self.kernel_width, step_size=self.step_size)
-
-        distribution.cent_to_hz()
-
-        # get the stable pitches
-        peaks = distribution.detect_peaks()
-        peak_idx = peaks[0]
-        stable_pitches = distribution.bins[peak_idx]
+            pitch[:, 1], ref_freq=dummy_freq, smooth_factor=self.kernel_width,
+            step_size=self.step_size)
 
         # get pitch chunks
         flt = PitchFilter(lower_interval_thres=self.lower_interval_thres,
@@ -70,80 +63,44 @@ class TonicLastNote(object):
         pitch_chunks = flt.decompose_into_chunks(pitch_sliced)
         pitch_chunks = flt.post_filter_chunks(pitch_chunks)
 
-        cnt = 1
-        while tonic is 0:
-            last_chunk = [element[1] for element in pitch_chunks[-cnt]]
+        tonic = {"value": None, "unit": "Hz",
+                 "timeInterval": {"value": None, "unit": 'sec'},
+                 "octaveWrapped": False,  # octave correction is done
+                 "procedure": "Tonic identification by last note detection",
+                 "citation": 'Atlı, H. S., Bozkurt, B., Şentürk, S. (2015). '
+                             'A Method for Tonic Frequency Identification of '
+                             'Turkish Makam Music Recordings. In Proceedings '
+                             'of 5th International Workshop on Folk Music '
+                             'Analysis, pages 119–122, Paris, France.'}
 
-            last_note = median(last_chunk)
-            stable_pitches = sorted(stable_pitches,
-                                    key=lambda sp: abs(last_note - sp))
+        # try all chunks starting from the last as the tonic candidate,
+        # considering the octaves
+        for chunk in reversed(pitch_chunks):
+            last_note = median(chunk[:, 1])
 
-            for j in range(len(stable_pitches)):
-                tonic_candidate = float(stable_pitches[j])
+            # check all the pitch classes of the last note as a tonic candidate
+            # by checking the vicinity in the stable pitches
+            tonic_candidate = self.check_tonic_with_octave_correction(
+                last_note, deepcopy(distribution))
 
-                if (tonic_candidate / (2 ** (2. / 53))) <= last_note <= \
-                        (tonic_candidate * (2 ** (2. / 53))):
-                    tonic = {"estimated_tonic": tonic_candidate,
-                             "time_interval": [pitch_chunks[-cnt][0][0],
-                                               pitch_chunks[-cnt][-1][0]]}
-                    break  # tonic found
+            # assign the tonic if there is an estimation
+            if tonic_candidate is not None:
+                tonic['value'] = tonic_candidate
+                tonic['timeInterval']['value'] = [chunk[0, 0], chunk[-1, 0]]
 
-                elif last_note >= tonic_candidate or last_note <= \
-                        tonic_candidate:
-                    if last_note <= tonic_candidate:
-                        times = round(tonic_candidate / last_note)
-
-                        if (tonic_candidate / (2 ** (2. / 53))) <= \
-                                (last_note * times) <= \
-                                (tonic_candidate * (2 ** (2. / 53))) and \
-                           (times < 3):
-                            tonic = {
-                                "estimated_tonic": tonic_candidate,
-                                "time_interval": [pitch_chunks[-cnt][0][0],
-                                                  pitch_chunks[-cnt][-1][0]]}
-                            break  # tonic found
-
-                    else:
-                        times = round(last_note / tonic_candidate)
-
-                        if (tonic_candidate / (2 ** (2. / 53))) <= \
-                                (last_note / times) <= \
-                                (tonic_candidate * (2 ** (2. / 53))) and \
-                           (times < 3):
-                            tonic = {
-                                "estimated_tonic": tonic_candidate,
-                                "time_interval": [pitch_chunks[-cnt][0][0],
-                                                  pitch_chunks[-cnt][-1][0]]}
-                            break  # tonic found
-            cnt += 1
-
-        # octave correction
-        tonic_candidate = self._octave_correction(tonic_candidate, pitch)
-
-        return_tonic = {"value": tonic_candidate, "unit": "Hz",
-                        "timeInterval": {"value": tonic['time_interval'],
-                                         "unit": 'sec'},
-                        "octaveWrapped": False,  # octave correction is done
-                        "procedure": "Tonic identification by detecting the "
-                                     "last note",
-                        "citation": 'Atlı, H. S., Bozkurt, B., Şentürk, S. '
-                                    '(2015). A Method for Tonic Frequency '
-                                    'Identification of Turkish Makam Music '
-                                    'Recordings. In Proceedings of 5th '
-                                    'International Workshop on Folk Music '
-                                    'Analysis, pages 119–122, Paris, France.'}
+                # convert distibution bins to frequency
+                distribution.cent_to_hz()
+                break
 
         if plot:
-            self.plot(pitch_sliced, return_tonic, pitch_chunks, distribution)
+            self.plot(pitch_sliced, tonic, pitch_chunks, distribution)
 
-        return (return_tonic, pitch_sliced, pitch_chunks, distribution,
-                stable_pitches)
+        return tonic, pitch_sliced, pitch_chunks, distribution
 
-    def _octave_correction(self, tonic, pitch):
-        # compute the pitch distribution
-        distribution = PitchDistribution.from_hz_pitch(
-            pitch[:, 1], ref_freq=tonic,
-            smooth_factor=self.kernel_width, step_size=self.step_size)
+    def check_tonic_with_octave_correction(self, tonic, distribution):
+        # shift the distribution to tonic
+        distribution.bins -= Converter.hz_to_cent(tonic, distribution.ref_freq)
+        distribution.ref_freq = tonic
 
         # get the stable pitches
         peaks = distribution.detect_peaks()
@@ -153,7 +110,7 @@ class TonicLastNote(object):
         # find all the frequencies in the tonic candidate's pitch class
         pitches_in_tonic_pitch_class = [
             sp for sp in stable_pitches
-            if min([sp % 1200, 1200 - (sp % 1200)]) < 50]
+            if min([sp % 1200, 1200 - (sp % 1200)]) < self.stable_pitch_dev]
 
         # sum all the pitch occurences in the pitch distribution starting from
         # these pitches till their octave
@@ -163,10 +120,14 @@ class TonicLastNote(object):
                                                (distribution.bins < pp + 1200)]
             pitch_weights.append(np.sum(vals_in_octave))
 
-        tonic_corr_cent = pitches_in_tonic_pitch_class[pitch_weights.index(max(
-            pitch_weights))]
+        # the candidate which accumulates the hishest weight is the tonic
+        try:
+            tonic_corr_cent = pitches_in_tonic_pitch_class[
+                pitch_weights.index(max(pitch_weights))]
 
-        return Converter.cent_to_hz(tonic_corr_cent, tonic)
+            return Converter.cent_to_hz(tonic_corr_cent, tonic)
+        except ValueError:
+            return None  # no stable pitch class found for the given frequency
 
     @staticmethod
     def plot(pitch, tonic, pitch_chunks, distribution):
