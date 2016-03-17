@@ -1,3 +1,7 @@
+#### *v1.3*
+ - Improved octave correction
+ - Simplified the identify method
+
 #### *v1.2.1*
  - Minor fix where the returned pitch distribution with hz bins had a erroneous frequency reference (it should be None)
 
