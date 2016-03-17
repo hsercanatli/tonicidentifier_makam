@@ -2,5 +2,6 @@
 *~
 .idea
 .ipynb_checkpoints
-makamtonicidentifier.egg-info
+*.egg-info
 test.py
+build/
