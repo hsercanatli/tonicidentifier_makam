@@ -1,7 +1,7 @@
 import os
 import numpy
 import json
-from tonicidentifier.TonicLastNote import TonicLastNote
+from tonicidentifier.toniclastnote import TonicLastNote
 
 
 def test_tonic_identification():
