@@ -15,8 +15,8 @@ Usage
 =======
 ```python
 import json
-from tonicidentifier.TonicLastNote import TonicLastNote
-from pitchfilter.PitchFilter import PitchFilter
+from tonicidentifier.toniclastnote import TonicLastNote
+from pitchfilter.pitchfilter import PitchFilter
 
 pitch = json.load(open("sample_data/cab08727-d5c2-4fda-9d96-d107915a85ec.json", 'r'))['pitch']
 
