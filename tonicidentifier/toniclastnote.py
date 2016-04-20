@@ -3,8 +3,8 @@ from numpy import median
 from numpy import where
 import numpy as np
 from pitchfilter.pitchfilter import PitchFilter
-from morty.PitchDistribution import PitchDistribution
-from morty.Converter import Converter
+from morty.pitchdistribution import PitchDistribution
+from morty.converter import Converter
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 from copy import deepcopy
