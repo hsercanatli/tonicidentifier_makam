@@ -54,7 +54,7 @@ class TonicLastNote(object):
         dummy_freq = 440.0
         distribution = PitchDistribution.from_hz_pitch(
             np.array(pitch)[:, 1], ref_freq=dummy_freq,
-            smooth_factor=self.kernel_width, step_size=self.step_size)
+            kernel_width=self.kernel_width, step_size=self.step_size)
 
         # get pitch chunks
         flt = PitchFilter(lower_interval_thres=self.lower_interval_thres,
