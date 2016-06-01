@@ -44,9 +44,14 @@ class TonicLastNote(object):
         Identify the tonic by detecting the last note and extracting the
         frequency
         """
+        pitch_sliced = np.array(deepcopy(pitch))
+
+        # trim silence in the end
+        sil_trim_len = len(np.trim_zeros(pitch_sliced[:,1], 'b'))  # remove
+        pitch_sliced = pitch_sliced[:sil_trim_len, :]  # trailing zeros
+
         # slice the pitch track to only include the last 10% of the track
         # for performance reasons
-        pitch_sliced = np.array(deepcopy(pitch))
         pitch_len = pitch_sliced.shape[0]
         pitch_sliced = pitch_sliced[-int(pitch_len * 0.1):, :]
 
@@ -61,6 +66,7 @@ class TonicLastNote(object):
                           upper_interval_thres=self.upper_interval_thres,
                           min_freq=self.min_freq, max_freq=self.max_freq)
         pitch_chunks = flt.decompose_into_chunks(pitch_sliced)
+
         pitch_chunks = flt.post_filter_chunks(pitch_chunks)
 
         tonic = {"value": None, "unit": "Hz",
