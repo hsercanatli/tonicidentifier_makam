@@ -47,7 +47,7 @@ class TonicLastNote(object):
         pitch_sliced = np.array(deepcopy(pitch))
 
         # trim silence in the end
-        sil_trim_len = len(np.trim_zeros(pitch_sliced[:,1], 'b'))  # remove
+        sil_trim_len = len(np.trim_zeros(pitch_sliced[:, 1], 'b'))  # remove
         pitch_sliced = pitch_sliced[:sil_trim_len, :]  # trailing zeros
 
         # slice the pitch track to only include the last 10% of the track
