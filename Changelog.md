@@ -1,3 +1,7 @@
+#### *v1.3.1*
+ - The silence in the end is ignored
+ - Updated the PitchDistribution requirement (morty)
+
 #### *v1.3*
  - Improved octave correction
  - Simplified the identify method
