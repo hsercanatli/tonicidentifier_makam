@@ -94,7 +94,7 @@ class TonicLastNote(object):
                 tonic['value'] = tonic_candidate
                 tonic['timeInterval']['value'] = [chunk[0, 0], chunk[-1, 0]]
 
-                # convert distibution bins to frequency
+                # convert distribution bins to frequency
                 distribution.cent_to_hz()
                 break
 
@@ -118,7 +118,7 @@ class TonicLastNote(object):
             sp for sp in stable_pitches
             if min([sp % 1200, 1200 - (sp % 1200)]) < self.stable_pitch_dev]
 
-        # sum all the pitch occurences in the pitch distribution starting from
+        # sum all the pitch occurrences in the pitch distribution starting from
         # these pitches till their octave
         pitch_weights = []
         for pp in pitches_in_tonic_pitch_class:
@@ -126,7 +126,7 @@ class TonicLastNote(object):
                                                (distribution.bins < pp + 1200)]
             pitch_weights.append(np.sum(vals_in_octave))
 
-        # the candidate which accumulates the hishest weight is the tonic
+        # the candidate which accumulates the highest weight is the tonic
         try:
             tonic_corr_cent = pitches_in_tonic_pitch_class[
                 pitch_weights.index(max(pitch_weights))]
